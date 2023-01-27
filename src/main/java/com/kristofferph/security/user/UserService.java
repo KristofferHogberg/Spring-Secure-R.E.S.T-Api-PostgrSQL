@@ -44,9 +44,6 @@ public class UserService {
 
     public void deleteUserById(Integer id) {
         try {
-//            if(!repository.existsById(id)){
-//                System.out.println("Could not find user id: " + id);
-//            };
             repository.deleteById(id);
 
         } catch (Exception e) {
