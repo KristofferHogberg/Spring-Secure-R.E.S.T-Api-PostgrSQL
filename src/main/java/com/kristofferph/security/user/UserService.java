@@ -1,6 +1,7 @@
 package com.kristofferph.security.user;
 
 import com.kristofferph.security.mapper.UserMapper;
+import org.hibernate.service.spi.InjectService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,8 +12,9 @@ import java.util.List;
 
 @Service
 public class UserService {
-    private final UserRepository repository;
 
+    private final UserRepository repository;
+    private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
     @Autowired
     public UserService(UserRepository repository) {
         this.repository = repository;
@@ -47,8 +49,8 @@ public class UserService {
     public UserUpdatedResponse updateUser(UserUpdatedResponse user) {
 
         var userToUpdate = repository.findById(user.getId()).orElseThrow();
-        UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-        User updatedUser = INSTANCE.userToUpdate(user);
+        //UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+        User updatedUser = mapper.userToUpdate(user);
 
         repository.save(updatedUser);
         return null;
