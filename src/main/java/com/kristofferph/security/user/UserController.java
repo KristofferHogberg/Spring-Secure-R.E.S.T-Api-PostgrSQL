@@ -35,4 +35,10 @@ public class UserController {
 
     }
 
+    @PatchMapping("/update")
+    public ResponseEntity<?> updateUserByEmail(@RequestBody UserUpdatedResponse userToUpdate) {
+        var updatedUser = userService.updateUser(userToUpdate);
+        System.out.println("HERE!!!!" + updatedUser);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+    }
 }

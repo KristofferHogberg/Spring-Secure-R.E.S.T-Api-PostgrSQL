@@ -1,5 +1,7 @@
 package com.kristofferph.security.user;
 
+import com.kristofferph.security.mapper.UserMapper;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,17 @@ public class UserService {
 
     }
 
+    public UserUpdatedResponse updateUser(UserUpdatedResponse user) {
+
+        var userToUpdate = repository.findById(user.getId()).orElseThrow();
+        UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+        User updatedUser = INSTANCE.userToUpdate(user);
+
+        repository.save(updatedUser);
+        return null;
+
+    }
+
     public void deleteUserById(Integer id) {
         try {
             repository.deleteById(id);
@@ -51,8 +64,8 @@ public class UserService {
         }
     }
 
-    public boolean userExist(Integer id){
-        if(repository.existsById(id)) return true;
+    public boolean userExist(Integer id) {
+        if (repository.existsById(id)) return true;
         return false;
     }
 
