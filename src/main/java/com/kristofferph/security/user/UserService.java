@@ -1,7 +1,6 @@
 package com.kristofferph.security.user;
 
 import com.kristofferph.security.mapper.UserMapper;
-import org.hibernate.service.spi.InjectService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +14,7 @@ public class UserService {
 
     private final UserRepository repository;
     private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
+
     @Autowired
     public UserService(UserRepository repository) {
         this.repository = repository;
@@ -25,7 +25,7 @@ public class UserService {
             var users = repository.findAll();
             List<UserResponse> userResponses = new ArrayList<>();
             users.forEach(user -> {
-                userResponses.add(new UserResponse(user.getFirstname(), user.getLastname(), user.getEmail()));
+                userResponses.add(mapper.getAllUsers(user));
             });
             return userResponses;
 
@@ -37,7 +37,7 @@ public class UserService {
     public UserResponse getUserByEmail(String email) {
         try {
             var user = repository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("No account found with email: "));
-            UserResponse userResponse = new UserResponse(user.getFirstname(), user.getLastname(), user.getEmail());
+            UserResponse userResponse = mapper.getUser(user);
             return userResponse;
 
         } catch (Exception e) {
@@ -48,12 +48,14 @@ public class UserService {
 
     public UserUpdatedResponse updateUser(UserUpdatedResponse user) {
 
-        var userToUpdate = repository.findById(user.getId()).orElseThrow();
-        //UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-        User updatedUser = mapper.userToUpdate(user);
+        try {
 
-        repository.save(updatedUser);
-        return null;
+            User updatedUser = mapper.userToUpdate(user);
+            repository.save(updatedUser);
+            return null;
+        } catch (Exception e) {
+            throw new IllegalArgumentException();
+        }
 
     }
 

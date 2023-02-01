@@ -13,7 +13,9 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    UserUpdatedResponse updateToUser(User userSource);
+    UserUpdatedResponse updateToUser(User userSrc);
+    UserResponse getUser(User userSrc);
     User userToUpdate(UserUpdatedResponse userDest);
+    UserResponse getAllUsers(User userSrc);
 
 }
