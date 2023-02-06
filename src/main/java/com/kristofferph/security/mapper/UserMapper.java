@@ -1,5 +1,7 @@
 package com.kristofferph.security.mapper;
 
+import com.kristofferph.security.game.App;
+import com.kristofferph.security.game.AppResponse;
 import com.kristofferph.security.user.User;
 import com.kristofferph.security.user.UserResponse;
 import com.kristofferph.security.user.UserService;
@@ -17,5 +19,6 @@ public interface UserMapper {
     UserResponse getUser(User userSrc);
     User userToUpdate(UserUpdatedResponse userDest);
     UserResponse getAllUsers(User userSrc);
+
 
 }
