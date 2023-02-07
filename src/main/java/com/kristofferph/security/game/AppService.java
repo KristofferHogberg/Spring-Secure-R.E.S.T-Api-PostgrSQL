@@ -45,12 +45,10 @@ public class AppService {
         }
 
         for (App app : apps) {
+
             System.out.println("appid: " + app.getAppid());
             System.out.println("name: " + app.getName());
         }
-
-        //String serializedApps = objectMapper.writeValueAsString(apps);
-        //System.out.println("Serialized apps: " + serializedApps);
 
         return result;
 
