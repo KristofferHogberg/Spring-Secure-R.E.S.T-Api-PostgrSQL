@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AppResponse {
+    private Integer id;
     private Integer appid;
     private String name;
 }

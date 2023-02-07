@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.engine.spi.Resolution;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +22,10 @@ public class AppController {
 
     private final AppService appService;
 
-//    @GetMapping("/list")
-//    public ResponseEntity<String> getAllApps() {
+//    @GetMapping("/listallapps")
+//    public ResponseEntity<String> getAllSteamApps() {
 //
-//        var games = gameService.getAllApps();
+//        var games = appService.getAllApps();
 //        String jsonStr = games.getBody();
 //        Gson gson = new GsonBuilder().create();
 //        App app = gson.fromJson(jsonStr, App.class);
@@ -35,12 +36,10 @@ public class AppController {
 //
 //    }
 
-    @GetMapping("/list")
-    public  ResponseEntity<String> getAllApps() {
+    @GetMapping("/loadapps")
+    public  ResponseEntity<ArrayList<AppResponse>> getAppsFromSteam() {
 
-        var applist = appService.getAllApps();
-
-        return applist;
+        return appService.getAppsFromSteam();
 
     }
 

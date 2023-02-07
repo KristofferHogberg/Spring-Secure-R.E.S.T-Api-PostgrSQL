@@ -2,7 +2,11 @@ package com.kristofferph.security.game;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kristofferph.security.mapper.GameMapper;
+import com.kristofferph.security.mapper.UserMapper;
+import com.kristofferph.security.user.User;
 import lombok.SneakyThrows;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.context.DelegatingApplicationListener;
@@ -15,6 +19,7 @@ import java.util.List;
 @Service
 public class AppService {
     private final AppRepository repository;
+    private final GameMapper mapper = Mappers.getMapper(GameMapper.class);
 
     @Autowired
     public AppService(AppRepository repository, DelegatingApplicationListener delegatingApplicationListener) {
@@ -23,37 +28,43 @@ public class AppService {
     }
 
     @SneakyThrows
-    public ResponseEntity<String> getAllApps() {
+    public ResponseEntity<ArrayList<AppResponse>> getAppsFromSteam() {
 
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/?format=json";
+        try {
 
-        ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
-        String json = result.getBody();
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/?format=json";
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode root = objectMapper.readTree(json);
+            ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
+            String json = result.getBody();
 
-        JsonNode appsNode = root.path("applist").path("apps");
-        List<App> apps = new ArrayList<>();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode root = objectMapper.readTree(json);
 
-        for (JsonNode appNode : appsNode) {
-            App app = new App();
-            app.setAppid(appNode.get("appid").asInt());
-            app.setName(appNode.get("name").asText());
-            apps.add(app);
+            JsonNode appsNode = root.path("applist").path("apps");
+            ArrayList<App> apps = new ArrayList<>();
+
+            for (JsonNode appNode : appsNode) {
+                App app = new App();
+                app.setAppid(appNode.get("appid").asInt());
+                app.setName(appNode.get("name").asText());
+                apps.add(app);
+            }
+
+            persistAllApps(apps);
+            var response = mapper.fromRespToModel(apps);
+
+            return ResponseEntity.ok().body(response);
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException();
         }
-
-        for (App app : apps) {
-
-            System.out.println("appid: " + app.getAppid());
-            System.out.println("name: " + app.getName());
-        }
-
-        return result;
-
     }
 
+    public void persistAllApps(ArrayList<App> apps) {
+
+        repository.saveAll(apps);
+    }
 
 }
 
