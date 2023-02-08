@@ -8,7 +8,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    UserUpdatedResponse updateToUser(User userSrc);
     UserResponse getUser(User userSrc);
     User userToUpdate(UserUpdatedResponse userDest);
     UserResponse getAllUsers(User userSrc);

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 @Mapper(componentModel = "spring")
 public interface GameMapper {
-    ArrayList<Game> persistAppsToDatabase(ArrayList<GameResponse> appDest);
     ArrayList<GameResponse> fromGameResponsesToModels(ArrayList<Game> gameDest);
     GameResponse fromGameResponseToModel(Game gameDest);
 }
