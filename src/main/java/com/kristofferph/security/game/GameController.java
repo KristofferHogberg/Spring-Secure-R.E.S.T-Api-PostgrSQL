@@ -1,10 +1,9 @@
 package com.kristofferph.security.game;
 
+import com.kristofferph.security.user.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +18,20 @@ public class GameController {
     @GetMapping("/loadapps")
     public ResponseEntity<ArrayList<GameResponse>> getAppsFromSteam() {
 
-        return gameService.getAppsFromSteam();
+        return gameService.getGamesFromSteam();
     }
 
     @GetMapping("/listall")
     public ResponseEntity<List<GameResponse>> getAllSteamApps() {
 
-        var apps = gameService.getAllAppsFromDb();
-        return ResponseEntity.ok().body(apps);
+        var games = gameService.getAllGamesFromDb();
+        return ResponseEntity.ok().body(games);
     }
+
+    @GetMapping("/name")
+    public ResponseEntity<GameResponse> getGameByName(@RequestBody final GameResponse gameName) {
+        return ResponseEntity.ok(gameService.getGameByName(gameName.getName()));
+    }
+
 
 }

@@ -8,6 +8,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.context.DelegatingApplicationListener;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,7 +27,7 @@ public class GameService {
     }
 
     @SneakyThrows
-    public ResponseEntity<ArrayList<GameResponse>> getAppsFromSteam() {
+    public ResponseEntity<ArrayList<GameResponse>> getGamesFromSteam() {
 
         try {
 
@@ -49,7 +50,7 @@ public class GameService {
                 games.add(game);
             }
 
-            persistAllApps(games);
+            persistAllGames(games);
             var response = mapper.fromGameResponsesToModels(games);
 
             return ResponseEntity.ok().body(response);
@@ -59,7 +60,7 @@ public class GameService {
         }
     }
 
-    public void persistAllApps(ArrayList<Game> games) {
+    public void persistAllGames(ArrayList<Game> games) {
         try {
             repository.saveAll(games);
 
@@ -68,7 +69,7 @@ public class GameService {
         }
     }
 
-    public List<GameResponse> getAllAppsFromDb() {
+    public List<GameResponse> getAllGamesFromDb() {
 
         var apps = repository.findAll();
 
@@ -78,6 +79,31 @@ public class GameService {
         });
 
         return gameRespons;
+    }
+
+    public GameResponse getGameByName(String name) {
+
+        try {
+            var game = repository.findByName(name).orElseThrow(() -> new RuntimeException("No account found with email: "));
+
+            if (!gameExist(game.getId()))
+                throw new RuntimeException("Could not find game: " + name + " " + "in database");
+
+            GameResponse gameResp = new GameResponse();
+            gameResp.setId(game.getId());
+            gameResp.setAppid(game.getAppid());
+            gameResp.setName(game.getName());
+
+            return gameResp;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Could not get user");
+        }
+    }
+
+    public boolean gameExist(Integer id) {
+        if (repository.existsById(id)) return true;
+        return false;
     }
 
 }
