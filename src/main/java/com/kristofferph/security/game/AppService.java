@@ -3,8 +3,6 @@ package com.kristofferph.security.game;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kristofferph.security.mapper.GameMapper;
-import com.kristofferph.security.mapper.UserMapper;
-import com.kristofferph.security.user.User;
 import lombok.SneakyThrows;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +50,7 @@ public class AppService {
             }
 
             persistAllApps(apps);
-            var response = mapper.fromRespToModel(apps);
+            var response = mapper.fromAppResponsesToModels(apps);
 
             return ResponseEntity.ok().body(response);
 
@@ -62,8 +60,24 @@ public class AppService {
     }
 
     public void persistAllApps(ArrayList<App> apps) {
+        try {
+            repository.saveAll(apps);
 
-        repository.saveAll(apps);
+        } catch (Exception e) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public List<AppResponse> getAllAppsFromDb() {
+
+        var apps = repository.findAll();
+
+        List<AppResponse> appResponses = new ArrayList<>();
+        apps.forEach(app -> {
+            appResponses.add(mapper.fromAppResponseToModel(app));
+        });
+
+        return appResponses;
     }
 
 }
