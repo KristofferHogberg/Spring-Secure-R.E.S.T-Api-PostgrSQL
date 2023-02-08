@@ -1,6 +1,5 @@
 package com.kristofferph.security.game;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "app")
-public class App {
+public class Game {
     @Id
     @GeneratedValue
     private Integer id;

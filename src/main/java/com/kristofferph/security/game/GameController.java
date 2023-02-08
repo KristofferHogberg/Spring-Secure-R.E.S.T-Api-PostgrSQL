@@ -12,20 +12,20 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/game")
 @RequiredArgsConstructor
-public class AppController {
+public class GameController {
 
-    private final AppService appService;
+    private final GameService gameService;
 
     @GetMapping("/loadapps")
-    public ResponseEntity<ArrayList<AppResponse>> getAppsFromSteam() {
+    public ResponseEntity<ArrayList<GameResponse>> getAppsFromSteam() {
 
-        return appService.getAppsFromSteam();
+        return gameService.getAppsFromSteam();
     }
 
     @GetMapping("/listall")
-    public ResponseEntity<List<AppResponse>> getAllSteamApps() {
+    public ResponseEntity<List<GameResponse>> getAllSteamApps() {
 
-        var apps = appService.getAllAppsFromDb();
+        var apps = gameService.getAllAppsFromDb();
         return ResponseEntity.ok().body(apps);
     }
 

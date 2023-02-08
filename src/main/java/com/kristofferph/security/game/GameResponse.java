@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppResponse {
+public class GameResponse {
     private Integer id;
     private Integer appid;
     private String name;

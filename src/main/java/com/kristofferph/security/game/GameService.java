@@ -15,18 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class AppService {
-    private final AppRepository repository;
+public class GameService {
+    private final GameRepository repository;
     private final GameMapper mapper = Mappers.getMapper(GameMapper.class);
 
     @Autowired
-    public AppService(AppRepository repository, DelegatingApplicationListener delegatingApplicationListener) {
+    public GameService(GameRepository repository, DelegatingApplicationListener delegatingApplicationListener) {
         this.repository = repository;
 
     }
 
     @SneakyThrows
-    public ResponseEntity<ArrayList<AppResponse>> getAppsFromSteam() {
+    public ResponseEntity<ArrayList<GameResponse>> getAppsFromSteam() {
 
         try {
 
@@ -40,17 +40,17 @@ public class AppService {
             JsonNode root = objectMapper.readTree(json);
 
             JsonNode appsNode = root.path("applist").path("apps");
-            ArrayList<App> apps = new ArrayList<>();
+            ArrayList<Game> games = new ArrayList<>();
 
             for (JsonNode appNode : appsNode) {
-                App app = new App();
-                app.setAppid(appNode.get("appid").asInt());
-                app.setName(appNode.get("name").asText());
-                apps.add(app);
+                Game game = new Game();
+                game.setAppid(appNode.get("appid").asInt());
+                game.setName(appNode.get("name").asText());
+                games.add(game);
             }
 
-            persistAllApps(apps);
-            var response = mapper.fromAppResponsesToModels(apps);
+            persistAllApps(games);
+            var response = mapper.fromGameResponsesToModels(games);
 
             return ResponseEntity.ok().body(response);
 
@@ -59,25 +59,25 @@ public class AppService {
         }
     }
 
-    public void persistAllApps(ArrayList<App> apps) {
+    public void persistAllApps(ArrayList<Game> games) {
         try {
-            repository.saveAll(apps);
+            repository.saveAll(games);
 
         } catch (Exception e) {
             throw new IllegalArgumentException();
         }
     }
 
-    public List<AppResponse> getAllAppsFromDb() {
+    public List<GameResponse> getAllAppsFromDb() {
 
         var apps = repository.findAll();
 
-        List<AppResponse> appResponses = new ArrayList<>();
-        apps.forEach(app -> {
-            appResponses.add(mapper.fromAppResponseToModel(app));
+        List<GameResponse> gameRespons = new ArrayList<>();
+        apps.forEach(game -> {
+            gameRespons.add(mapper.fromGameResponseToModel(game));
         });
 
-        return appResponses;
+        return gameRespons;
     }
 
 }
